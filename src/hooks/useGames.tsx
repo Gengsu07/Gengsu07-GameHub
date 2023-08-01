@@ -24,18 +24,24 @@ interface GameResponse {
 const useGames = () => {
   const [games, setGame] = useState<Game[]>([]);
   const [errors, setError] = useState("");
+  const [isloading, setIsloading] = useState(false);
 
   useEffect(() => {
+    setIsloading(true);
     const controller = new AbortController();
     ApiClient.get<GameResponse>("/games", { signal: controller.signal })
-      .then((res) => setGame(res.data.results))
+      .then((res) => {
+        setGame(res.data.results);
+        setIsloading(false);
+      })
       .catch((err) => {
         if (err instanceof CanceledError) return;
         setError(err.message);
+        setIsloading(false);
       });
     return () => controller.abort();
   }, []);
-  return { games, errors };
+  return { games, errors, isloading };
 };
 
 export default useGames;
