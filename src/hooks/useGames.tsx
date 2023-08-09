@@ -15,11 +15,6 @@ export interface Game {
   metacritic: number;
 }
 
-interface GameResponse {
-  count: number;
-  results: Game[];
-}
-
 const useGames = (gameQuery: GameQuery) =>
   useData<Game>(
     "/games",
@@ -28,6 +23,7 @@ const useGames = (gameQuery: GameQuery) =>
         genres: gameQuery.genre?.id,
         parent_platforms: gameQuery.platform?.id,
         ordering: gameQuery.sortOrder,
+        search: gameQuery.searchText,
       },
     },
     [gameQuery] //gamequery berbah maka re render
