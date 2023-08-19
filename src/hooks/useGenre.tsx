@@ -1,4 +1,6 @@
 // import useData from "./useData";
+import { useQuery } from "@tanstack/react-query";
+import ApiClient, { FetchResponse } from "../services/ApiClient";
 import genres from "../data/genres.json";
 
 export interface Genre {
@@ -6,15 +8,15 @@ export interface Genre {
   name: string;
   image_background: string;
 }
-
 const useGenre = () => {
-  const { data, isloading, errors } = {
-    data: genres,
-    isloading: false,
-    errors: false,
-  }; //coba pakai static data karena genres kan listnya akan jarang berubah jadi drpd loading nge fetch terus
-  // const { data, isloading, errors } = useData<Genre>("/genres");
-  return { data, isloading, errors };
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["genre"],
+    queryFn: () =>
+      ApiClient.get<FetchResponse<Genre>>("/genres").then((res) => res.data),
+    staleTime: 24 * 60 * 60 * 1000, //24h
+    initialData: { count: genres.length, results: genres },
+  });
+  return { data, isLoading, error };
 };
 
 export default useGenre;
