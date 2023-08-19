@@ -11,11 +11,11 @@ import { SiNintendo } from "react-icons/si";
 import { MdPhoneIphone } from "react-icons/md";
 import { BsGlobe } from "react-icons/bs";
 
-import { Platforms } from "../hooks/useGames";
+import { Platform } from "../hooks/usePlatforms";
 import { IconType } from "react-icons";
 
 interface Props {
-  platforms: Platforms[];
+  platforms: Platform[];
 }
 
 const GamePlatformsList = ({ platforms }: Props) => {
