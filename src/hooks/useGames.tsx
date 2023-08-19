@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { GameQuery } from "../App";
-import ApiClient, { FetchResponse } from "../services/ApiClient";
 import { Platform } from "./usePlatforms";
+import APIClient, { FetchResponse } from "../services/ApiClient";
 
 export interface Game {
   id: number;
@@ -12,19 +12,24 @@ export interface Game {
   rating_top: number;
 }
 
+const ApiClient = new APIClient<Game>("/games");
+
 const useGames = (gameQuery: GameQuery) =>
-  useQuery<FetchResponse<Game>, Error>({
+  useInfiniteQuery<FetchResponse<Game>, Error>({
     queryKey: ["games", gameQuery],
-    queryFn: () =>
-      ApiClient.get<FetchResponse<Game>>("/games", {
+    queryFn: ({ pageParam = 1 }) =>
+      ApiClient.getAll({
         params: {
           genres: gameQuery.genre?.id,
           parent_platforms: gameQuery.platform?.id,
           ordering: gameQuery.sortOrder,
           search: gameQuery.searchText,
+          page: pageParam,
         },
-      }).then((res) => res.data),
+      }),
     staleTime: 5 * 60 * 60 * 1000,
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.next ? allPages.length + 1 : undefined,
 
     // },
     // [gameQuery] //gamequery berbah maka re render
