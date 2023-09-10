@@ -1,29 +1,26 @@
 import { Button, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
 import { BsChevronDown } from "react-icons/bs";
+import useGameQueryStore from "../Store";
 import usePlatform from "../hooks/usePlatform";
-import usePlatforms, { Platform } from "../hooks/usePlatforms";
+import usePlatforms from "../hooks/usePlatforms";
 
-interface Props {
-  onSelectedPlatform: (platform: Platform) => void;
-  selectedPlatformId?: number;
-}
 
-const PlatformSelector = ({
-  onSelectedPlatform,
-  selectedPlatformId,
-}: Props) => {
+
+const PlatformSelector = () => {
   const { data, error } = usePlatforms();
+  const selectedPlatformId = useGameQueryStore(s=> s.gameQuery.platformId)
   const selectedPlatform = usePlatform(selectedPlatformId);
+  const setSelectedPlatform = useGameQueryStore(s=> s.setPlatfomId)
   if (error) return null;
 
   return (
     <Menu>
       <MenuButton as={Button} rightIcon={<BsChevronDown />}>
-        {selectedPlatform?.slug || "Platforms"}
+        {selectedPlatform?.name || "Platforms"}
       </MenuButton>
       <MenuList>
         {data?.results.map((i) => (
-          <MenuItem onClick={() => onSelectedPlatform(i)} key={i.id}>
+          <MenuItem onClick={() => setSelectedPlatform(i.id)} key={i.id}>
             {i.name}
           </MenuItem>
         ))}
